@@ -274,7 +274,7 @@ export default function Layout() {
                     </div>
 
                     {/* mascot peeking out from the bottom-left corner of the bubble */}
-                    <div className="absolute -bottom-0 left-0">
+                    <div className="absolute bottom-0 left-0">
                       <GhostMascot />
                     </div>
                   </div>
