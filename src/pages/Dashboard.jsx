@@ -20,6 +20,7 @@ import ExpenseForm from '../components/ExpenseForm';
 import { useAuth } from '../contexts/AuthContext';
 import { useMyExpenses } from '../hooks/useMyExpenses';
 import toast from 'react-hot-toast';
+import { useUI } from '../contexts/UIContext';
 
 const CHART_COLORS = ['#6366f1', '#06b6d4', '#8b5cf6', '#10b981', '#f59e0b'];
 const TAG_COLORS = {
@@ -56,6 +57,7 @@ export default function Dashboard() {
   const [activeTagFilter, setActiveTagFilter] = useState(null);
   const [insightIndex, setInsightIndex] = useState(0);
   const navigate = useNavigate();
+  const { triggerRefresh } = useUI();
 
   // Your own expenses only – not the group
   const expenses = useMyExpenses();
@@ -84,6 +86,7 @@ export default function Dashboard() {
   const handleCloseForm = () => {
     setShowForm(false);
     setEditExpense(null);
+    triggerRefresh();
   };
 
   const now = new Date();
