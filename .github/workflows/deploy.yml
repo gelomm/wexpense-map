@@ -4,7 +4,6 @@ on:
   push:
     branches: [ main ]
 
-# Grant write permission to the GITHUB_TOKEN
 permissions:
   contents: write
 
@@ -25,11 +24,12 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          # If you want to keep the branch history, add:
-          # force_orphan: true
