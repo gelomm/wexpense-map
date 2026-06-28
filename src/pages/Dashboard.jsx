@@ -17,6 +17,8 @@ import {
   FaRegLightbulb,
 } from 'react-icons/fa';
 import ExpenseForm from '../components/ExpenseForm';
+import RankBadge from '../components/RankBadge';
+import { getRank } from '../utils/rankUtils';
 import { useAuth } from '../contexts/AuthContext';
 import { useMyExpenses } from '../hooks/useMyExpenses';
 import toast from 'react-hot-toast';
@@ -61,6 +63,14 @@ export default function Dashboard() {
 
   // Your own expenses only – not the group
   const expenses = useMyExpenses();
+
+  // Rank is based on lifetime contribution count, not the time-range filter above.
+  // NOTE: this assumes useMyExpenses() returns the full, all-time list of your
+  // expenses. If that hook is ever changed to only return a filtered/paginated
+  // slice, swap this for a dedicated count query so rank doesn't drift with
+  // whatever time range happens to be selected.
+  const contributionCount = expenses.length;
+  const rank = getRank(contributionCount);
 
   useEffect(() => {
     localStorage.setItem('dashboardView', viewMode);
@@ -222,12 +232,20 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Today's Tab, Streak, Insight */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Today's Tab, Rank, Streak, Insight */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-zinc-200">
           <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">Today's Tab</h2>
           <p className="text-3xl font-semibold text-zinc-900 mt-2 tabular-nums">{currency}{todayTotal.toFixed(2)}</p>
           <p className="text-xs text-zinc-400 mt-1">{todayCount} expense{todayCount !== 1 ? 's' : ''} today</p>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl border border-zinc-200">
+          <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wide">Rank</h2>
+          <div className="mt-2">
+            <RankBadge count={contributionCount} size="md" showProgress />
+          </div>
+          <p className="text-xs text-zinc-400 mt-2">{contributionCount} contribution{contributionCount !== 1 ? 's' : ''}</p>
         </div>
 
         {streak > 1 && (
@@ -374,42 +392,92 @@ export default function Dashboard() {
       {/* Leaderboard */}
       {(leaderboard.length > 0 || mostExpensiveLocations.length > 0) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {leaderboard.length > 0 && (
-            <div className="bg-white p-5 rounded-2xl border border-zinc-200">
-              <h3 className="text-sm font-semibold text-zinc-900 mb-3 flex items-center gap-2">
-                <FaStar className="text-amber-400" size={13} /> Top rated locations
-              </h3>
-              <ul className="divide-y divide-zinc-100">
-                {leaderboard.map((loc, idx) => (
-                  <li key={loc.name} className="flex justify-between items-center py-2.5">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-medium text-zinc-400 w-4">{idx + 1}</span>
-                      <span className="text-sm text-zinc-800 font-medium truncate max-w-[160px]">{loc.name}</span>
-                    </div>
-                    <span className="text-sm text-zinc-500 font-medium tabular-nums">{loc.avg.toFixed(1)} ★</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {mostExpensiveLocations.length > 0 && (
-            <div className="bg-white p-5 rounded-2xl border border-zinc-200">
-              <h3 className="text-sm font-semibold text-zinc-900 mb-3 flex items-center gap-2">
-                <FaMoneyBillWave className="text-zinc-400" size={13} /> Top spending locations
-              </h3>
-              <ul className="divide-y divide-zinc-100">
-                {mostExpensiveLocations.map((loc, idx) => (
-                  <li key={loc.name} className="flex justify-between items-center py-2.5">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-medium text-zinc-400 w-4">{idx + 1}</span>
-                      <span className="text-sm text-zinc-800 font-medium truncate max-w-[160px]">{loc.name}</span>
-                    </div>
-                    <span className="text-sm text-zinc-500 font-medium tabular-nums">{currency}{loc.total.toFixed(2)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+{leaderboard.length > 0 && (
+  <div className="bg-white p-5 rounded-2xl border border-zinc-200">
+    <h3 className="text-sm font-semibold text-zinc-900 mb-3 flex items-center gap-2">
+      <FaStar className="text-amber-400" size={13} /> Top rated locations
+    </h3>
+    <ul className="divide-y divide-zinc-100">
+      {leaderboard.map((loc, idx) => (
+        <li
+          key={loc.name}
+          className={`flex justify-between items-center ${
+            idx < 3
+              ? 'py-2.5 bg-indigo-50/60 -mx-3 px-3 rounded-md'
+              : 'py-1.5 text-xs text-zinc-400'
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <span
+              className={`font-medium w-4 ${
+                idx < 3 ? 'text-sm text-indigo-600' : 'text-xs text-zinc-400'
+              }`}
+            >
+              {idx + 1}
+            </span>
+            <span
+              className={`truncate max-w-[160px] ${
+                idx < 3 ? 'text-sm font-medium text-zinc-800' : 'text-xs text-zinc-400'
+              }`}
+            >
+              {loc.name}
+            </span>
+          </div>
+          <span
+            className={`tabular-nums ${
+              idx < 3 ? 'text-sm font-semibold text-zinc-900' : 'text-xs text-zinc-400'
+            }`}
+          >
+            {loc.avg.toFixed(1)} ★
+          </span>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+{mostExpensiveLocations.length > 0 && (
+  <div className="bg-white p-5 rounded-2xl border border-zinc-200">
+    <h3 className="text-sm font-semibold text-zinc-900 mb-3 flex items-center gap-2">
+      <FaMoneyBillWave className="text-zinc-400" size={13} /> Top spending locations
+    </h3>
+    <ul className="divide-y divide-zinc-100">
+      {mostExpensiveLocations.map((loc, idx) => (
+        <li
+          key={loc.name}
+          className={`flex justify-between items-center ${
+            idx < 3
+              ? 'py-2.5 bg-indigo-50/60 -mx-3 px-3 rounded-md'
+              : 'py-1.5 text-xs text-zinc-400'
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <span
+              className={`font-medium w-4 ${
+                idx < 3 ? 'text-sm text-indigo-600' : 'text-xs text-zinc-400'
+              }`}
+            >
+              {idx + 1}
+            </span>
+            <span
+              className={`truncate max-w-[160px] ${
+                idx < 3 ? 'text-sm font-medium text-zinc-800' : 'text-xs text-zinc-400'
+              }`}
+            >
+              {loc.name}
+            </span>
+          </div>
+          <span
+            className={`tabular-nums ${
+              idx < 3 ? 'text-sm font-semibold text-zinc-900' : 'text-xs text-zinc-400'
+            }`}
+          >
+            {currency}{loc.total.toFixed(2)}
+          </span>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
         </div>
       )}
 

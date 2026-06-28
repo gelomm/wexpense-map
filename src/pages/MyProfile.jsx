@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import ExpenseForm from '../components/ExpenseForm';
+import RankBadge from '../components/RankBadge';
 
 const TAG_COLORS = {
   will_go_back: '#10b981',
@@ -113,6 +114,8 @@ export default function MyProfile() {
 
   const displayName = profile?.full_name || 'User';
   const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
+  // Contribution = lifetime count of expense posts, drives rank
+  const contributionCount = expenses.length;
 
   return (
     <div className="space-y-6 p-8 pb-10 max-w-[1400px] mx-auto">
@@ -146,7 +149,12 @@ export default function MyProfile() {
 
           {/* User info */}
           <div className="text-center sm:text-left flex-1">
-            <h1 className="text-xl font-semibold text-zinc-900">{displayName}</h1>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <h1 className="text-xl font-semibold text-zinc-900">{displayName}</h1>
+              <div className="flex justify-center sm:justify-start">
+                <RankBadge count={contributionCount} size="md" />
+              </div>
+            </div>
             <p className="text-zinc-400 text-sm mt-0.5">{session?.user?.email}</p>
             <button
               onClick={handleSignOut}
@@ -162,6 +170,11 @@ export default function MyProfile() {
             <p className="text-2xl font-semibold text-zinc-900 mt-1 tabular-nums">{currency}{totalSpent.toFixed(2)}</p>
             <p className="text-xs text-zinc-400 mt-0.5">{expenses.length} expense{expenses.length !== 1 ? 's' : ''}</p>
           </div>
+        </div>
+
+        {/* Rank progress nudge */}
+        <div className="mt-5 pt-5 border-t border-zinc-100">
+          <RankBadge count={contributionCount} size="md" showProgress />
         </div>
       </div>
 

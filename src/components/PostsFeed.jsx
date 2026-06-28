@@ -34,7 +34,7 @@ function ExpensePostCard({ expense, poster, currency, currentUserProfile }) {
     <div className="w-full max-w-lg mx-auto bg-[#FDFBF6] rounded-2xl overflow-hidden border border-zinc-200 shadow-sm">
 
       {/* Instagram-style header: avatar + name + date */}
-      <div className="flex items-center gap-3 px-4 py-3">
+      <div className="flex text-left items-center gap-3 px-4 py-3">
         <div className="w-9 h-9 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0 flex items-center justify-center ring-2 ring-zinc-200">
           {poster?.avatarUrl ? (
             <img src={poster.avatarUrl} alt="" className="w-full h-full object-cover" />
@@ -99,8 +99,8 @@ function ExpensePostCard({ expense, poster, currency, currentUserProfile }) {
       <div className="px-4 pt-3 pb-4 space-y-2.5">
 
         {/* Title + amount on same line */}
-        <div className="flex items-baseline justify-between gap-3">
-          <h4 className="text-sm font-semibold text-zinc-900 truncate flex-1">
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm text-left font-semibold text-zinc-900 truncate flex-1">
             {expense.title || expense.caption || 'Expense'}
           </h4>
           <span className="text-lg font-bold text-zinc-900 tabular-nums flex-shrink-0 tracking-tight">
@@ -127,7 +127,7 @@ function ExpensePostCard({ expense, poster, currency, currentUserProfile }) {
 
         {/* Caption if present */}
         {expense.caption && expense.title && (
-          <p className="text-sm text-zinc-500 leading-snug">{expense.caption}</p>
+          <p className="text-sm text-left text-zinc-500 leading-snug">{expense.caption}</p>
         )}
 
         {/* Dashed divider */}

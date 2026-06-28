@@ -29,7 +29,7 @@ export default function MemberDetail({ member, onClose }) {
     <div className="fixed inset-0 bg-zinc-900/40 backdrop-blur-sm flex items-center justify-center z-[2000] p-4">
       <div className="bg-white w-full max-w-lg max-h-[80vh] overflow-auto rounded-2xl shadow-xl">
         {/* Header */}
-        <div className="sticky top-0 bg-white px-6 pt-5 pb-3 z-10 border-b border-zinc-100">
+        <div className="sticky text-left top-0 bg-white px-6 pt-5 pb-3 z-10 border-b border-zinc-100">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-zinc-100 flex items-center justify-center">
@@ -53,10 +53,10 @@ export default function MemberDetail({ member, onClose }) {
         </div>
 
         {/* Content */}
-        <div className="px-6 py-5">
+        <div className="text-left px-6 py-5">
           {/* Highest Expense */}
           {highestExpense && (
-            <div className="mb-5 p-4 bg-zinc-50 rounded-xl border border-zinc-200">
+            <div className="mb-5 p-4 text-center bg-zinc-50 rounded-xl border border-zinc-200">
               <p className="text-xs font-medium text-zinc-400 uppercase tracking-wide">Highest expense</p>
               <p className="text-2xl font-semibold text-zinc-900 mt-1 tabular-nums">
                 {currency}{highestExpense.amount}

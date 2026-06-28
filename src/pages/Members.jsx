@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import MemberDetail from '../components/MemberDetail';
 import InviteModal from '../components/InviteModal';
 import PostsFeed from '../components/PostsFeed';
+import RankBadge from '../components/RankBadge';
 
 export default function Members() {
   const { profile } = useAuth();
@@ -50,9 +51,6 @@ export default function Members() {
       }
     }
 
-    // YTD date range
-    const yearStart = new Date(new Date().getFullYear(), 0, 1).toISOString();
-
     const enriched = await Promise.all(
       rawMembers.map(async (m) => {
         try {
@@ -67,10 +65,8 @@ export default function Members() {
             const totalExpense = expenseData?.reduce((sum, e) => sum + e.amount, 0) || 0;
             const recentExpense = expenseData?.[0] || null;
 
-            // YTD contributions
-            const ytdTotal = expenseData
-              ?.filter(e => e.created_at >= yearStart)
-              .reduce((sum, e) => sum + e.amount, 0) || 0;
+            // Contribution = lifetime count of expense posts (drives rank), not a sum
+            const contributionCount = expenseData?.length || 0;
 
             return {
               ...m,
@@ -78,7 +74,7 @@ export default function Members() {
               avatarUrl: profilesById[m.linked_user_id]?.avatar_url || null,
               totalExpense,
               recentExpense,
-              ytdTotal,
+              contributionCount,
             };
           }
         } catch (e) {
@@ -90,7 +86,7 @@ export default function Members() {
           avatarUrl: null,
           totalExpense: 0,
           recentExpense: null,
-          ytdTotal: 0,
+          contributionCount: 0,
         };
       })
     );
@@ -129,46 +125,32 @@ export default function Members() {
 
   return (
     <div className="p-6 md:p-8 max-w-[1400px] mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-semibold text-zinc-900">Members</h1>
-          <p className="text-sm text-zinc-500 mt-0.5">People you split expenses with</p>
-        </div>
-        <button
-          onClick={() => setShowInviteModal(true)}
-          className="flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors cursor-pointer"
-        >
-          <FaPlus size={12} /> Add member
-        </button>
-      </div>
-
       {/* Tabs */}
       <div className="flex items-center gap-1 border-b border-zinc-200">
         <button
-          onClick={() => setActiveTab('members')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
-            activeTab === 'members'
-              ? 'border-zinc-900 text-zinc-900'
-              : 'border-transparent text-zinc-400 hover:text-zinc-700'
-          }`}
-        >
-          <FaUsers size={13} /> Members
-        </button>
-        <button
-          onClick={() => setActiveTab('posts')}
+          onClick={() => setActiveTab('WeFeed')}
           className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
             activeTab === 'posts'
               ? 'border-zinc-900 text-zinc-900'
               : 'border-transparent text-zinc-400 hover:text-zinc-700'
           }`}
         >
-          <FaNewspaper size={13} /> Posts
+          <FaNewspaper size={13} /> WeFeed
+        </button>
+        <button
+          onClick={() => setActiveTab('WeMembers')}
+          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
+            activeTab === 'members'
+              ? 'border-zinc-900 text-zinc-900'
+              : 'border-transparent text-zinc-400 hover:text-zinc-700'
+          }`}
+        >
+          <FaUsers size={13} /> WeMembers
         </button>
       </div>
 
       {/* ── Members Tab ── */}
-      {activeTab === 'members' && (
+      {activeTab === 'WeMembers' && (
         <>
           {/* Pending Invitations */}
           {invitations.length > 0 && (
@@ -203,14 +185,22 @@ export default function Members() {
           )}
 
           {/* Member Cards */}
+          <div className="flex justify-end">
+            <button
+            onClick={() => setShowInviteModal(true)}
+            className="flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors cursor-pointer"
+            >
+            <FaPlus size={12} /> Add member
+            </button>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {members.map((member) => (
               <div
                 key={member.id}
                 onClick={() => setSelectedMember(member)}
-                className="cursor-pointer bg-white rounded-2xl border border-zinc-200 p-5 hover:border-zinc-300 hover:shadow-sm transition-all"
+                className="cursor-pointer text-left bg-white rounded-2xl border border-zinc-200 p-5 hover:border-zinc-300 hover:shadow-sm transition-all"
               >
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-3 mb-3">
                   <div className="w-11 h-11 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0 flex items-center justify-center">
                     {member.avatarUrl ? (
                       <img src={member.avatarUrl} alt="" className="w-full h-full object-cover" />
@@ -232,6 +222,11 @@ export default function Members() {
                   </button>
                 </div>
 
+                {/* Rank badge */}
+                <div className="mb-4">
+                  <RankBadge count={member.contributionCount} size="sm" />
+                </div>
+
                 <div className="space-y-2">
                   <div className="flex justify-between items-baseline">
                     <span className="text-xs text-zinc-500">Total</span>
@@ -239,13 +234,11 @@ export default function Members() {
                       {currency}{(member.totalExpense || 0).toFixed(2)}
                     </span>
                   </div>
-                  {/* YTD contribution */}
+                  {/* Contribution = number of expense posts, not an amount */}
                   <div className="flex justify-between items-baseline">
-                    <span className="text-xs text-zinc-400">
-                      YTD <span className="text-[10px] text-zinc-300">contributions</span>
-                    </span>
+                    <span className="text-xs text-zinc-400">Contribution</span>
                     <span className="text-xs font-medium text-zinc-500 tabular-nums">
-                      {currency}{(member.ytdTotal || 0).toFixed(2)}
+                      {member.contributionCount || 0}
                     </span>
                   </div>
                   {member.recentExpense && (
@@ -268,7 +261,7 @@ export default function Members() {
                 </div>
                 <h3 className="text-lg font-semibold text-zinc-900">No members yet</h3>
                 <p className="text-sm text-zinc-500 mt-1 max-w-sm mx-auto">
-                  Invite friends or add them manually to start splitting expenses.
+                  Invite friends or add them manually to start posting expenses together.
                 </p>
                 <button
                   onClick={() => setShowInviteModal(true)}
@@ -283,7 +276,7 @@ export default function Members() {
       )}
 
       {/* ── Posts Tab ── */}
-      {activeTab === 'posts' && (
+      {activeTab === 'WeFeed' && (
         <PostsFeed members={members} />
       )}
 

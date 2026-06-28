@@ -267,7 +267,7 @@ export default function Layout() {
                   <div className="relative flex-shrink-0 pr-6 pb-9 pt-1">
                     <div className="relative">
                       <div className="bg-white/80 backdrop-blur-sm border border-zinc-200 rounded-2xl rounded-bl-md px-4 py-1.5 shadow-sm max-w-[220px] sm:max-w-xs">
-                        <p className="text-zinc-600 text-sm">{headerMessage}</p>
+                        <p className="text-zinc-600 text-xs">{headerMessage}</p>
                       </div>
                       {/* tail pointing down toward the mascot */}
                       <div className="absolute -bottom-1.5 left-5 w-3 h-3 bg-white/80 border-b border-r border-zinc-200 rotate-45 -z-10" />
