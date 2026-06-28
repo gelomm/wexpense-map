@@ -116,7 +116,7 @@ export default function PostComments({ expenseId, currentUserProfile, onCountCha
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="bg-zinc-50 rounded-xl px-3 py-2">
+        <div className="bg-zinc-50 text-left rounded-xl px-3 py-2">
           <p className="text-[11px] font-semibold text-zinc-700 mb-0.5">
             {comment.profile?.full_name || 'Member'}
           </p>
