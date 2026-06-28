@@ -24,13 +24,7 @@ function ExpensePostCard({ expense, poster, currency, currentUserProfile }) {
   const photos = expense.photos?.length ? expense.photos : expense.photo_url ? [expense.photo_url] : [];
   const [photoIdx, setPhotoIdx] = useState(0);
 
-  useEffect(() => {
-    supabase
-      .from('expense_comments')
-      .select('id', { count: 'exact', head: true })
-      .eq('expense_id', expense.id)
-      .then(({ count }) => setCommentCount(count ?? 0));
-  }, [expense.id, openComments]);
+  // count is kept in sync via onCountChange from PostComments
 
   const dateStr = new Date(expense.created_at).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
@@ -154,6 +148,7 @@ function ExpensePostCard({ expense, poster, currency, currentUserProfile }) {
           <PostComments
             expenseId={expense.id}
             currentUserProfile={currentUserProfile}
+            onCountChange={(n) => setCommentCount(n)}
           />
         )}
       </div>
