@@ -264,7 +264,7 @@ export default function MapPage() {
 
   const [autoFlyEnabled, setAutoFlyEnabled] = useState(false);
 
-  const { openOverlay, closeOverlay } = useUI();
+  const { openOverlay, closeOverlay, triggerRefresh } = useUI();
   const lightboxHandlerRef = useRef(null);
 
   const handleLightboxOpen = useCallback((index, url, expenseId) => {
@@ -370,7 +370,7 @@ export default function MapPage() {
 
   const handleRightClick = (latlng) => setTempMarker({ lat: latlng.lat, lng: latlng.lng });
   const handleTempMarkerClick = () => { setEditExpense(null); setShowForm(true); };
-  const handleFormClose = () => { setShowForm(false); setEditExpense(null); setTempMarker(null); };
+  const handleFormClose = () => { setShowForm(false); setEditExpense(null); setTempMarker(null); triggerRefresh();};
   const handlePanelClick = (exp) => {
     if (exp.latitude && exp.longitude) {
       setAutoFlyEnabled(true);
