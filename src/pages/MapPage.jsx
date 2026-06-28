@@ -486,7 +486,7 @@ export default function MapPage() {
       <div className="map-ui-layer">
 
         {/* ── Mini Dashboard — upper left ── */}
-        <div className="absolute top-20 left-3 z-[1001] pointer-events-auto">
+        <div className="absolute top-35 left-3 z-[1001] pointer-events-auto">
           <button
             onClick={() => setMiniDashboardOpen(!miniDashboardOpen)}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all shadow-sm border ${
@@ -635,7 +635,7 @@ export default function MapPage() {
         {panelOpen ? (
           <>
             {/* Desktop panel — right side */}
-            <div className="hidden md:flex absolute top-0 right-0 bottom-5 z-[1001] flex-col pointer-events-auto" style={{ width: '304px' }}>
+            <div className="hidden md:flex absolute top-30 right-0 bottom-5 z-[1001] flex-col pointer-events-auto" style={{ width: '304px' }}>
               <div className="m-3 mb-0 bg-white/95 backdrop-blur-sm rounded-t-xl border border-zinc-200/80 border-b-0 px-4 pt-4 pb-3">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-sm font-semibold text-zinc-900">Expenses</h2>
@@ -758,7 +758,7 @@ export default function MapPage() {
           /* Desktop: show list toggle button when panel is closed */
           <button
             onClick={() => setPanelOpen(true)}
-            className="hidden md:flex absolute top-4 right-4 z-[1002] bg-white/90 backdrop-blur-sm border border-zinc-200/80 shadow-sm rounded-lg p-2.5 pointer-events-auto hover:bg-white transition-colors"
+            className="hidden md:flex absolute top-35 right-4 z-[1002] bg-white/90 backdrop-blur-sm border border-zinc-200/80 shadow-sm rounded-lg p-2.5 pointer-events-auto hover:bg-white transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-zinc-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
@@ -778,8 +778,7 @@ export default function MapPage() {
       {/* ── Lightbox ── */}
       {lightboxOpen && lightboxExpense && (
         <div
-          className="fixed inset-0 bg-zinc-950/80 flex items-center justify-center z-[2000]"
-          className="md:pl-6"
+          className="fixed inset-0 bg-zinc-950/80 flex items-center justify-center z-[2000] md:pl-6"
           onClick={closeLightbox}
           onTouchStart={handleLightboxTouchStart}
           onTouchEnd={handleLightboxTouchEnd}
