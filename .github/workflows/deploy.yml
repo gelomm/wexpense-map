@@ -19,6 +19,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install missing Tailwind native binary (Linux)
+        run: npm install --no-save @tailwindcss/oxide-linux-x64
+
       - name: Build
         run: npm run build
 
