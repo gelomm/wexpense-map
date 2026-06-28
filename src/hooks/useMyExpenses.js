@@ -1,8 +1,10 @@
 import { useCallback, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useUI } from '../contexts/UIContext';
 
 export function useMyExpenses() {
   const [expenses, setExpenses] = useState([]);
+  const { refreshKey } = useUI();           // ← listen to refresh
 
   const fetchMyExpenses = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -15,7 +17,7 @@ export function useMyExpenses() {
       .order('created_at', { ascending: false });
 
     setExpenses(data || []);
-  }, []);
+  }, [refreshKey]);   // ← refetch when key changes
 
   useEffect(() => {
     fetchMyExpenses();
