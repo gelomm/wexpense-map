@@ -19,10 +19,10 @@ const mainNavItems = [
 ];
 
 const headerMessages = {
-  '/': "Here's how your spending looks this month.",
-  '/map': 'Explore your expenses by location.',
-  '/members': 'Manage the people you split with.',
-  '/profile': 'Your personal expense profile.',
+  '/': "Here's how your spending looks this month. ₍₍⚞(˶ˆᗜˆ˵)⚟⁾⁾",
+  '/map': 'Explore your expenses by location. 𐔌՞ ܸ.ˬ.ܸ՞𐦯˚˖𓍢ִ໋❀',
+  '/members': 'Manage the people you split with. ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧',
+  '/profile': 'Your personal expense profile.｡°(°¯᷄◠¯᷅°)°｡',
   '/settings': null,
 };
 
@@ -258,7 +258,7 @@ export default function Layout() {
                   <h1 className="text-xl font-bold text-zinc-900" style={{ fontFamily: "'Caveat', cursive" }}>
                     Welcome back,{' '}
                     <span className="text-indigo-600">{displayName}</span>
-                    {' '}⋆˚꩜｡
+                    {' '}⋆˚꩜｡‧₊˚♪ 𝄞₊˚⊹
                   </h1>
                 </div>
 
