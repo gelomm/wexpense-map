@@ -486,7 +486,7 @@ export default function MapPage() {
       <div className="map-ui-layer">
 
         {/* ── Mini Dashboard — upper left ── */}
-        <div className="absolute top-35 left-3 z-[1001] pointer-events-auto">
+        <div className="absolute top-3 left-3 z-[1001] pointer-events-auto">
           <button
             onClick={() => setMiniDashboardOpen(!miniDashboardOpen)}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all shadow-sm border ${
@@ -635,7 +635,7 @@ export default function MapPage() {
         {panelOpen ? (
           <>
             {/* Desktop panel — right side */}
-            <div className="hidden md:flex absolute top-30 right-0 bottom-5 z-[1001] flex-col pointer-events-auto" style={{ width: '304px' }}>
+            <div className="hidden md:flex absolute top-0 right-0 bottom-0 z-[1001] flex-col pointer-events-auto" style={{ width: '304px' }}>
               <div className="m-3 mb-0 bg-white/95 backdrop-blur-sm rounded-t-xl border border-zinc-200/80 border-b-0 px-4 pt-4 pb-3">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-sm font-semibold text-zinc-900">Expenses</h2>
@@ -692,73 +692,22 @@ export default function MapPage() {
             </div>
 
             {/* Mobile panel — bottom sheet */}
-            <div className="md:hidden absolute left-0 right-0 bottom-0 z-[1002] pointer-events-auto flex flex-col" style={{ maxHeight: '65%' }}>
-              {/* Backdrop */}
-              <div className="absolute inset-0 -top-[100vh]" onClick={() => setPanelOpen(false)} />
-
-              <div className="relative bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden" style={{ maxHeight: '65vh' }}>
-                {/* Drag handle */}
-                <div className="flex justify-center pt-3 pb-1">
-                  <div className="w-10 h-1 rounded-full bg-zinc-200" />
-                </div>
-
-                {/* Header */}
-                <div className="px-4 pt-2 pb-3 border-b border-zinc-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-sm font-semibold text-zinc-900">Expenses</h2>
-                    <button onClick={() => setPanelOpen(false)} className="text-zinc-400 p-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="flex gap-1 bg-zinc-100 rounded-lg p-0.5 mb-2">
-                    {['recent', 'topRated', 'topSpending'].map((filter) => (
-                      <button
-                        key={filter}
-                        onClick={() => changeFilter(filter)}
-                        className={`flex-1 px-2 py-1.5 rounded-md text-[11px] font-medium transition-all ${
-                          activeFilter === filter ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500'
-                        }`}
-                      >
-                        {filter === 'recent' ? 'Recent' : filter === 'topRated' ? '⭐ Top' : '💰 Most'}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    onClick={toggleCleanMode}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all border ${
-                      cleanMode ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-zinc-50 text-zinc-500 border-zinc-200'
-                    }`}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-                      </svg>
-                      Clean view
-                    </span>
-                    <span className={`w-7 h-4 rounded-full transition-all relative ${cleanMode ? 'bg-emerald-500' : 'bg-zinc-300'}`}>
-                      <span className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow-sm transition-all ${cleanMode ? 'left-3.5' : 'left-0.5'}`} />
-                    </span>
-                  </button>
-                </div>
-
-                {/* Scrollable list */}
-                <div className="flex-1 overflow-y-auto">
-                  <ExpenseListContent
-                    filteredExpenses={filteredExpenses}
-                    currency={currency}
-                    onItemClick={handlePanelClick}
-                  />
-                </div>
-              </div>
-            </div>
+            <MobileBottomSheet
+              onClose={() => setPanelOpen(false)}
+              activeFilter={activeFilter}
+              changeFilter={changeFilter}
+              cleanMode={cleanMode}
+              toggleCleanMode={toggleCleanMode}
+              filteredExpenses={filteredExpenses}
+              currency={currency}
+              onItemClick={handlePanelClick}
+            />
           </>
         ) : (
           /* Desktop: show list toggle button when panel is closed */
           <button
             onClick={() => setPanelOpen(true)}
-            className="hidden md:flex absolute top-35 right-4 z-[1002] bg-white/90 backdrop-blur-sm border border-zinc-200/80 shadow-sm rounded-lg p-2.5 pointer-events-auto hover:bg-white transition-colors"
+            className="hidden md:flex absolute top-4 right-4 z-[1002] bg-white/90 backdrop-blur-sm border border-zinc-200/80 shadow-sm rounded-lg p-2.5 pointer-events-auto hover:bg-white transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-zinc-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
@@ -857,6 +806,159 @@ export default function MapPage() {
         </div>
       )}
     </>
+  );
+}
+
+// Snap points as % of viewport height (measured from bottom)
+const SNAP_POINTS = [0.30, 0.55, 0.80]; // min, mid, max
+const CLOSE_THRESHOLD = 0.18; // drag below this % → close
+
+function MobileBottomSheet({ onClose, activeFilter, changeFilter, cleanMode, toggleCleanMode, filteredExpenses, currency, onItemClick }) {
+  const [sheetHeight, setSheetHeight] = useState(SNAP_POINTS[1]); // open at mid
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartY = useRef(null);
+  const dragStartHeight = useRef(null);
+  const sheetRef = useRef(null);
+  const listRef = useRef(null);
+
+  const vh = typeof window !== 'undefined' ? window.innerHeight : 800;
+
+  // Snap to nearest snap point, or close if below threshold
+  const snapToNearest = useCallback((candidateFraction) => {
+    if (candidateFraction < CLOSE_THRESHOLD) {
+      onClose();
+      return;
+    }
+    const nearest = SNAP_POINTS.reduce((prev, curr) =>
+      Math.abs(curr - candidateFraction) < Math.abs(prev - candidateFraction) ? curr : prev
+    );
+    setSheetHeight(nearest);
+  }, [onClose]);
+
+  // Touch handlers on the drag handle
+  const handleTouchStart = (e) => {
+    // Only drag if the list is scrolled to top (or touch started on handle)
+    dragStartY.current = e.touches[0].clientY;
+    dragStartHeight.current = sheetHeight;
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (dragStartY.current === null) return;
+    const dy = dragStartY.current - e.touches[0].clientY; // positive = dragging up
+    const newFraction = Math.min(
+      SNAP_POINTS[SNAP_POINTS.length - 1],   // cap at max
+      Math.max(0.10, dragStartHeight.current + dy / vh)  // floor at 10% so it feels alive before closing
+    );
+    setSheetHeight(newFraction);
+  };
+
+  const handleTouchEnd = (e) => {
+    if (dragStartY.current === null) return;
+    const dy = dragStartY.current - e.changedTouches[0].clientY;
+    const candidate = dragStartHeight.current + dy / vh;
+    dragStartY.current = null;
+    setIsDragging(false);
+    snapToNearest(candidate);
+  };
+
+  const heightPx = Math.round(sheetHeight * vh);
+
+  return (
+    <div className="md:hidden absolute left-0 right-0 bottom-0 z-[1002] pointer-events-auto">
+      {/* Dim backdrop — tap to close */}
+      <div
+        className="absolute left-0 right-0 bottom-0 bg-zinc-900/20 transition-opacity duration-300"
+        style={{ height: '100vh', top: `-${100 - sheetHeight * 100}vh` }}
+        onClick={onClose}
+      />
+
+      {/* Sheet */}
+      <div
+        ref={sheetRef}
+        className="relative bg-white rounded-t-2xl shadow-2xl flex flex-col overflow-hidden"
+        style={{
+          height: `${heightPx}px`,
+          transition: isDragging ? 'none' : 'height 0.32s cubic-bezier(0.32, 0.72, 0, 1)',
+        }}
+      >
+        {/* ── Drag handle zone ── */}
+        <div
+          className="flex-shrink-0 flex flex-col items-center pt-3 pb-2 cursor-grab active:cursor-grabbing touch-none select-none"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* Visual handle bar */}
+          <div
+            className={`w-10 h-1 rounded-full transition-colors duration-150 ${isDragging ? 'bg-zinc-400' : 'bg-zinc-200'}`}
+          />
+          {/* Snap indicators */}
+          <div className="flex gap-1.5 mt-2">
+            {SNAP_POINTS.map((pt, i) => (
+              <button
+                key={pt}
+                onClick={() => setSheetHeight(pt)}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
+                  sheetHeight === pt ? 'bg-zinc-500 scale-125' : 'bg-zinc-200 hover:bg-zinc-300'
+                }`}
+                aria-label={['Compact', 'Half', 'Tall'][i]}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Header (not draggable — only the handle zone above is) */}
+        <div className="flex-shrink-0 px-4 pt-1 pb-3 border-b border-zinc-100">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-zinc-900">Expenses</h2>
+            <button onClick={onClose} className="text-zinc-400 p-1">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div className="flex gap-1 bg-zinc-100 rounded-lg p-0.5 mb-2">
+            {['recent', 'topRated', 'topSpending'].map((filter) => (
+              <button
+                key={filter}
+                onClick={() => changeFilter(filter)}
+                className={`flex-1 px-2 py-1.5 rounded-md text-[11px] font-medium transition-all ${
+                  activeFilter === filter ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500'
+                }`}
+              >
+                {filter === 'recent' ? 'Recent' : filter === 'topRated' ? '⭐ Top' : '💰 Most'}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={toggleCleanMode}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all border ${
+              cleanMode ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-zinc-50 text-zinc-500 border-zinc-200'
+            }`}
+          >
+            <span className="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+              </svg>
+              Clean view
+            </span>
+            <span className={`w-7 h-4 rounded-full transition-all relative ${cleanMode ? 'bg-emerald-500' : 'bg-zinc-300'}`}>
+              <span className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow-sm transition-all ${cleanMode ? 'left-3.5' : 'left-0.5'}`} />
+            </span>
+          </button>
+        </div>
+
+        {/* Scrollable list */}
+        <div ref={listRef} className="flex-1 overflow-y-auto">
+          <ExpenseListContent
+            filteredExpenses={filteredExpenses}
+            currency={currency}
+            onItemClick={onItemClick}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
