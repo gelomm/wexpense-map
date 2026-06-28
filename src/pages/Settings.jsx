@@ -79,30 +79,44 @@ export default function Settings() {
     }
   };
 
+  const spinner = (
+    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+    </svg>
+  );
+
+  const inputClass = "w-full p-2.5 border border-zinc-200 rounded-xl bg-white text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-300 transition-all";
+  const labelClass = "block text-sm font-medium text-zinc-700 mb-1.5 flex items-center gap-1.5";
+  const hintClass = "text-xs text-zinc-400 mt-1.5";
+  const saveButtonClass = "flex items-center gap-2 bg-zinc-900 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-zinc-800 transition-colors disabled:opacity-50 cursor-pointer";
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6 pb-4">
-      {/* Page header with receipt personality */}
+    <div className="max-w-2xl mx-auto space-y-6 pb-4 p-8">
+      {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold text-amber-900 flex items-center gap-2">
-          <FaFileInvoiceDollar className="text-amber-600" />
+        <h1 className="text-2xl font-semibold text-zinc-900 flex items-center gap-2.5">
+          <div className="w-9 h-9 bg-zinc-900 rounded-xl flex items-center justify-center flex-shrink-0">
+            <FaFileInvoiceDollar className="text-white" size={14} />
+          </div>
           Settings
         </h1>
-        <p className="text-amber-600 text-sm mt-1">Tweak your preferences, keep your receipt book in order.</p>
+        <p className="text-sm text-zinc-400 mt-1.5 ml-[46px]">Manage your profile, account, and preferences.</p>
       </div>
 
-      {/* Tab Navigation – now amber themed */}
-      <div className="flex border-b border-amber-200 overflow-x-auto">
+      {/* Tab Navigation */}
+      <div className="inline-flex bg-white border border-zinc-200 rounded-full p-1 overflow-x-auto max-w-full">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors cursor-pointer ${
               activeTab === tab.key
-                ? 'border-amber-600 text-amber-600'
-                : 'border-transparent text-amber-500 hover:text-amber-700'
+                ? 'bg-zinc-900 text-white'
+                : 'text-zinc-500 hover:text-zinc-800'
             }`}
           >
-            <tab.icon className="text-base" />
+            <tab.icon size={12} />
             {tab.label}
           </button>
         ))}
@@ -110,60 +124,49 @@ export default function Settings() {
 
       {/* Profile Tab */}
       {activeTab === 'profile' && (
-        <div className="bg-amber-50/70 backdrop-blur-sm rounded-xl border border-dashed border-amber-300 shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2 text-amber-600">
-            <FaUser /> Profile
+        <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
+          <h2 className="text-sm font-semibold flex items-center gap-2 text-zinc-900">
+            <FaUser size={13} className="text-zinc-400" /> Profile
           </h2>
           <form onSubmit={updateProfile} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-amber-800 mb-1">Full Name</label>
+              <label className={labelClass}>Full Name</label>
               <input
                 type="text"
-                className="w-full p-2 border border-amber-300 rounded-lg bg-white/80 text-amber-900 focus:ring-2 focus:ring-amber-500"
+                className={inputClass}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Your full name"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-amber-800 mb-1 flex items-center gap-1">
-                <FaEnvelope className="text-amber-500" /> Email
+              <label className={labelClass}>
+                <FaEnvelope className="text-zinc-400" size={12} /> Email
               </label>
               <input
                 type="email"
-                className="w-full p-2 border border-amber-300 rounded-lg bg-white/80 text-amber-900 focus:ring-2 focus:ring-amber-500"
+                className={inputClass}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="New email (leave blank to keep current)"
               />
-              <p className="text-xs text-amber-600 mt-1">Leave blank to keep current email.</p>
+              <p className={hintClass}>Leave blank to keep current email.</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-amber-800 mb-1 flex items-center gap-1">
-                <FaLock className="text-amber-500" /> New Password
+              <label className={labelClass}>
+                <FaLock className="text-zinc-400" size={12} /> New Password
               </label>
               <input
                 type="password"
-                className="w-full p-2 border border-amber-300 rounded-lg bg-white/80 text-amber-900 focus:ring-2 focus:ring-amber-500"
+                className={inputClass}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="New password (leave blank to keep current)"
               />
-              <p className="text-xs text-amber-600 mt-1">Minimum 6 characters.</p>
+              <p className={hintClass}>Minimum 6 characters.</p>
             </div>
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex items-center gap-2 bg-amber-600 text-white px-5 py-2.5 rounded-lg hover:bg-amber-700 transition disabled:opacity-50 cursor-pointer shadow"
-            >
-              {saving ? (
-                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                </svg>
-              ) : (
-                <FaSave />
-              )}
+            <button type="submit" disabled={saving} className={saveButtonClass}>
+              {saving ? spinner : <FaSave size={13} />}
               Save Changes
             </button>
           </form>
@@ -172,51 +175,40 @@ export default function Settings() {
 
       {/* Account Tab */}
       {activeTab === 'account' && (
-        <div className="bg-amber-50/70 backdrop-blur-sm rounded-xl border border-dashed border-amber-300 shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2 text-amber-600">
-            <FaShieldAlt /> Account Security
+        <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
+          <h2 className="text-sm font-semibold flex items-center gap-2 text-zinc-900">
+            <FaShieldAlt size={13} className="text-zinc-400" /> Account Security
           </h2>
-          <p className="text-sm text-amber-700">Manage your login credentials and account security.</p>
+          <p className="text-sm text-zinc-400">Manage your login credentials and account security.</p>
           <form onSubmit={updateProfile} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-amber-800 mb-1 flex items-center gap-1">
-                <FaEnvelope className="text-amber-500" /> Change Email
+              <label className={labelClass}>
+                <FaEnvelope className="text-zinc-400" size={12} /> Change Email
               </label>
               <input
                 type="email"
-                className="w-full p-2 border border-amber-300 rounded-lg bg-white/80 text-amber-900 focus:ring-2 focus:ring-amber-500"
+                className={inputClass}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="New email address"
               />
-              <p className="text-xs text-amber-600 mt-1">A confirmation email will be sent.</p>
+              <p className={hintClass}>A confirmation email will be sent.</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-amber-800 mb-1 flex items-center gap-1">
-                <FaLock className="text-amber-500" /> Change Password
+              <label className={labelClass}>
+                <FaLock className="text-zinc-400" size={12} /> Change Password
               </label>
               <input
                 type="password"
-                className="w-full p-2 border border-amber-300 rounded-lg bg-white/80 text-amber-900 focus:ring-2 focus:ring-amber-500"
+                className={inputClass}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="New password"
               />
-              <p className="text-xs text-amber-600 mt-1">Minimum 6 characters.</p>
+              <p className={hintClass}>Minimum 6 characters.</p>
             </div>
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex items-center gap-2 bg-amber-600 text-white px-5 py-2.5 rounded-lg hover:bg-amber-700 transition disabled:opacity-50 cursor-pointer shadow"
-            >
-              {saving ? (
-                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                </svg>
-              ) : (
-                <FaSave />
-              )}
+            <button type="submit" disabled={saving} className={saveButtonClass}>
+              {saving ? spinner : <FaSave size={13} />}
               Update Account
             </button>
           </form>
@@ -225,39 +217,28 @@ export default function Settings() {
 
       {/* Preferences Tab */}
       {activeTab === 'preferences' && (
-        <div className="bg-amber-50/70 backdrop-blur-sm rounded-xl border border-dashed border-amber-300 shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2 text-amber-600">
-            <FaCog /> Preferences
+        <div className="bg-white rounded-2xl border border-zinc-200 p-6 space-y-4">
+          <h2 className="text-sm font-semibold flex items-center gap-2 text-zinc-900">
+            <FaCog size={13} className="text-zinc-400" /> Preferences
           </h2>
-          <p className="text-sm text-amber-700">Customize your experience.</p>
+          <p className="text-sm text-zinc-400">Customize your experience.</p>
           <form onSubmit={updateProfile} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-amber-800 mb-1 flex items-center gap-1">
-                <FaDollarSign className="text-amber-500" /> Currency Symbol
+              <label className={labelClass}>
+                <FaDollarSign className="text-zinc-400" size={12} /> Currency Symbol
               </label>
               <input
                 type="text"
                 maxLength={3}
-                className="w-24 p-2 border border-amber-300 rounded-lg bg-white/80 text-amber-900 focus:ring-2 focus:ring-amber-500"
+                className={`${inputClass} w-24`}
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
                 placeholder="₱"
               />
-              <p className="text-xs text-amber-600 mt-1">E.g., ₱, $, €</p>
+              <p className={hintClass}>E.g., ₱, $, €</p>
             </div>
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex items-center gap-2 bg-amber-600 text-white px-5 py-2.5 rounded-lg hover:bg-amber-700 transition disabled:opacity-50 cursor-pointer shadow"
-            >
-              {saving ? (
-                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                </svg>
-              ) : (
-                <FaSave />
-              )}
+            <button type="submit" disabled={saving} className={saveButtonClass}>
+              {saving ? spinner : <FaSave size={13} />}
               Save Preference
             </button>
           </form>
@@ -266,18 +247,18 @@ export default function Settings() {
 
       {/* Danger Zone Tab */}
       {activeTab === 'danger' && (
-        <div className="bg-amber-50/70 backdrop-blur-sm rounded-xl border border-dashed border-red-300 shadow-sm p-6 space-y-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2 text-red-600">
-            <FaTrashAlt /> Danger Zone
+        <div className="bg-white rounded-2xl border border-rose-200 p-6 space-y-4">
+          <h2 className="text-sm font-semibold flex items-center gap-2 text-rose-600">
+            <FaTrashAlt size={13} /> Danger Zone
           </h2>
-          <p className="text-sm text-amber-800">
+          <p className="text-sm text-zinc-500">
             Once you delete your account, all data will be permanently removed. Please be certain.
           </p>
           <button
             onClick={deleteAccount}
-            className="flex items-center gap-2 bg-red-500 text-white px-5 py-2.5 rounded-lg hover:bg-red-600 transition cursor-pointer shadow"
+            className="flex items-center gap-2 bg-rose-500 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-rose-600 transition-colors cursor-pointer"
           >
-            <FaTrashAlt /> Delete My Account
+            <FaTrashAlt size={13} /> Delete My Account
           </button>
         </div>
       )}
