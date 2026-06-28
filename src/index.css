@@ -244,15 +244,22 @@ html, body, #root {
 
 /* Ensure these utilities work with the inline classes */
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+}
+
+/* On larger screens, constrain to original max-width and add border */
+@media (min-width: 1200px) {
+  #root {
+    max-width: 1126px;
+    border-inline: 1px solid var(--border);
+  }
 }
 
 h1,
@@ -297,4 +304,34 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+/* ── Mobile map layout ── */
+.map-container-outer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 96px; /* sidebar width on desktop */
+}
+
+.map-ui-layer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 96px;
+  z-index: 1001;
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .map-container-outer {
+    left: 0;
+    bottom: calc(56px + env(safe-area-inset-bottom));
+  }
+  .map-ui-layer {
+    left: 0;
+    bottom: calc(56px + env(safe-area-inset-bottom));
+  }
 }

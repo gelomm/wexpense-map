@@ -145,6 +145,7 @@ export default function Layout() {
   const location = useLocation();
   const currentPath = location.pathname;
   const isSettings = currentPath === '/settings';
+  const isMap = currentPath === '/map';
   const headerMessage = headerMessages[currentPath] || '';
 
   const { profile } = useAuth();
@@ -152,7 +153,7 @@ export default function Layout() {
   const { isOverlayOpen } = useUI();
 
   return (
-    <div className="flex h-screen absolute inset-0 z-[1001] flex-row">
+    <div className="flex h-screen absolute inset-0 z-[1001] flex-col md:flex-row">
       {/* Dynamic blurred shapes */}
       <div className="animated-shapes">
         <div className="shape shape-1" />
@@ -161,9 +162,9 @@ export default function Layout() {
         <div className="shape shape-4" />
       </div>
 
-      {/* Left Sidebar */}
+      {/* ── Desktop Left Sidebar (hidden on mobile) ── */}
       <aside
-        className={`w-24 bg-white/70 backdrop-blur-md border-r border-zinc-200 flex flex-col items-center py-6 z-20 shadow-sm transition-opacity duration-300 ${
+        className={`hidden md:flex w-24 bg-white/70 backdrop-blur-md border-r border-zinc-200 flex-col items-center py-6 z-20 shadow-sm transition-opacity duration-300 ${
           isOverlayOpen ? 'opacity-0 pointer-events-none' : ''
         }`}
       >
@@ -207,13 +208,13 @@ export default function Layout() {
       </aside>
 
       {/* Right side: header + content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Fixed header – fades when overlay is open */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-0">
+        {/* Fixed header – fades when overlay is open; hidden on mobile map for max space */}
         {!isSettings && (
           <header
             className={`relative px-2 py-0 z-[1001] transition-opacity duration-300 ${
               isOverlayOpen ? 'opacity-0 pointer-events-none' : ''
-            }`}
+            } ${isMap ? 'hidden md:block' : ''}`}
           >
             {/* Color tint gradient */}
             <div className="absolute top-0 left-0 right-0 bottom-[-32px] bg-gradient-to-b from-white/95 via-white/60 to-transparent pointer-events-none" />
@@ -264,7 +265,7 @@ export default function Layout() {
 
                 {/* Speech bubble with mascot peeking from its bottom-left – right */}
                 {headerMessage && (
-                  <div className="relative flex-shrink-0 pr-6 pb-9 pt-1">
+                  <div className="relative flex-shrink-0 pr-6 pb-9 pt-1 hidden sm:block">
                     <div className="relative">
                       <div className="bg-white/80 backdrop-blur-sm border border-zinc-200 rounded-2xl rounded-bl-md px-4 py-1.5 shadow-sm max-w-[220px] sm:max-w-xs">
                         <p className="text-zinc-600 text-xs">{headerMessage}</p>
@@ -285,11 +286,62 @@ export default function Layout() {
         )}
 
         {/* Scrollable content */}
-        <main className="flex-1 relative overflow-y-auto z-10">
+        <main className={`flex-1 relative overflow-y-auto z-10 ${isMap ? 'pb-0' : 'pb-16 md:pb-0'}`}>
           <PageLoader />
           <Outlet />
         </main>
       </div>
+
+      {/* ── Mobile Bottom Tab Bar (hidden on desktop) ── */}
+      <nav
+        className={`md:hidden fixed bottom-0 left-0 right-0 z-[2000] bg-white/90 backdrop-blur-md border-t border-zinc-200 transition-opacity duration-300 ${
+          isOverlayOpen ? 'opacity-0 pointer-events-none' : ''
+        }`}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className="flex items-center justify-around px-2 pt-2 pb-1">
+          {mainNavItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === '/'}
+              className={({ isActive }) =>
+                `flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl transition-all duration-200 min-w-[56px] ${
+                  isActive
+                    ? 'text-zinc-900'
+                    : 'text-zinc-400'
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-zinc-100' : ''}`}>
+                    <item.icon size={18} />
+                  </div>
+                  <span className="text-[10px] font-medium">{item.label}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl transition-all duration-200 min-w-[56px] ${
+                isActive ? 'text-zinc-900' : 'text-zinc-400'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <div className={`p-1.5 rounded-xl transition-all ${isActive ? 'bg-zinc-100' : ''}`}>
+                  <FaCog size={18} />
+                </div>
+                <span className="text-[10px] font-medium">Settings</span>
+              </>
+            )}
+          </NavLink>
+        </div>
+      </nav>
     </div>
   );
 }
