@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { FaUserCircle, FaMapMarkerAlt, FaStar, FaComment, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -18,7 +19,7 @@ const tagLabels = {
   what_the_hell: 'What the hell?',
 };
 
-function ExpensePostCard({ expense, poster, currency, currentUserProfile }) {
+function ExpensePostCard({ expense, poster, currency, currentUserProfile, onPosterClick }) {
   const [openComments, setOpenComments] = useState(false);
   const [commentCount, setCommentCount] = useState(null);
   const photos = expense.photos?.length ? expense.photos : expense.photo_url ? [expense.photo_url] : [];
@@ -35,15 +36,23 @@ function ExpensePostCard({ expense, poster, currency, currentUserProfile }) {
 
       {/* Instagram-style header: avatar + name + date */}
       <div className="flex text-left items-center gap-3 px-4 py-3">
-        <div className="w-9 h-9 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0 flex items-center justify-center ring-2 ring-zinc-200">
+        <button
+          onClick={() => onPosterClick?.(poster)}
+          className="w-9 h-9 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0 flex items-center justify-center ring-2 ring-zinc-200 cursor-pointer hover:ring-zinc-300 transition-all"
+        >
           {poster?.avatarUrl ? (
             <img src={poster.avatarUrl} alt="" className="w-full h-full object-cover" />
           ) : (
             <FaUserCircle className="text-zinc-300" size={20} />
           )}
-        </div>
+        </button>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-zinc-900 truncate">{poster?.displayName || 'Member'}</p>
+          <button
+            onClick={() => onPosterClick?.(poster)}
+            className="text-sm font-semibold text-zinc-900 truncate hover:underline cursor-pointer text-left"
+          >
+            {poster?.displayName || 'Member'}
+          </button>
           {(expense.short_location || expense.location_name) && (
             <p className="text-[11px] text-zinc-400 flex items-center gap-1">
               <FaMapMarkerAlt size={9} />
@@ -158,6 +167,7 @@ function ExpensePostCard({ expense, poster, currency, currentUserProfile }) {
 
 export default function PostsFeed({ members }) {
   const { profile, session } = useAuth();
+  const navigate = useNavigate();
   const currency = profile?.currency || '₱';
 
   const [expenses, setExpenses] = useState([]);
@@ -202,10 +212,20 @@ export default function PostsFeed({ members }) {
         displayName: profile?.full_name || 'You',
         avatarUrl: profile?.avatar_url || null,
         userId: session.user.id,
+        isSelf: true,
       };
     }
     const m = membersByUserId[expense.user_id];
     return m || { displayName: 'Member', avatarUrl: null, userId: expense.user_id };
+  };
+
+  const handlePosterClick = (poster) => {
+    if (!poster) return;
+    if (poster.isSelf) {
+      navigate('/profile');
+    } else if (poster.id) {
+      navigate(`/members/${poster.id}`);
+    }
   };
 
   const posterOptions = [
@@ -281,6 +301,7 @@ export default function PostsFeed({ members }) {
               poster={getPoster(exp)}
               currency={currency}
               currentUserProfile={currentUserProfile}
+              onPosterClick={handlePosterClick}
             />
           ))}
         </div>

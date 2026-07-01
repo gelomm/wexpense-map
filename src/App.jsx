@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import MapPage from './pages/MapPage';
 import Members from './pages/Members';
+import MemberDetailPage from './pages/MemberDetailPage';
 import MyProfile from './pages/MyProfile';
 import Settings from './pages/Settings';
 import AcceptInvite from './pages/AcceptInvite';
@@ -38,6 +39,7 @@ export default function App() {
               <Route index element={<Dashboard />} />
               <Route path="map" element={<MapPage />} />
               <Route path="members" element={<Members />} />
+              <Route path="members/:id" element={<MemberDetailPage />} />
               <Route path="profile" element={<MyProfile />} />
               <Route path="settings" element={<Settings />} />
               <Route path="/accept-invite" element={<AcceptInvite />} />
